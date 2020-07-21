@@ -90,6 +90,11 @@ def get_r1_data():
     """
     :return: 返回现有确诊省市top5
     """
+    sql = "SELECT province,(SUM(confirm)-SUM(heal)-SUM(dead)) AS new FROM details " \
+          "WHERE update_time=(SELECT update_time FROM details ORDER BY update_time DESC LIMIT 1) " \
+          "GROUP BY province ORDER BY new DESC LIMIT 5;"
+    res = query(sql)
+    return res
 
 def get_r2_data():
     """
