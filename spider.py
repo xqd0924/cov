@@ -155,6 +155,29 @@ def get_baidu_hot():
     return context
 
 
+def update_hotsearch():
+    """
+    将疫情热搜插入数据库
+    :return:
+    """
+    cursor = None
+    conn = None
+    try:
+        context = get_baidu_hot()
+        print(f"{time.asctime()}开始更新热搜数据")
+        conn, cursor = get_conn()
+        sql = "insert into hotsearch(dt,content) values(%s,%s)"
+        ts = time.strftime("%Y-%m-%d %X")
+        for i in context:
+            cursor.execute(sql, (ts, i))
+        conn.commit()
+        print(f"{time.asctime()}数据更新完毕")
+    except:
+        traceback.print_exc()
+    finally:
+        close_conn(conn, cursor)
+
+
 if __name__ == '__main__':
     l = len(sys.argv)
     if l == 1:
@@ -171,6 +194,6 @@ if __name__ == '__main__':
         if order == 'up_his':
             update_history()
         elif order == 'up_hot':
-            get_baidu_hot()
+            update_hotsearch()
         elif order == 'up_det':
             update_details()
